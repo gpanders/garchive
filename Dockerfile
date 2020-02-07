@@ -1,6 +1,6 @@
 FROM golang:alpine as build
 
-WORKDIR /go/src/app
+WORKDIR /go/src/garchive
 COPY . .
 
 RUN go install -i
@@ -12,4 +12,5 @@ COPY --from=build /go/bin/garchive /go/bin/
 WORKDIR /app
 COPY index.html .
 COPY static static/
-ENTRYPOINT ["/go/bin/garchive", "--port", "80"]
+EXPOSE 8080
+ENTRYPOINT ["/go/bin/garchive"]
