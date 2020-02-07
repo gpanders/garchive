@@ -5,21 +5,35 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
-awk -F'\t' '{print $2}' "$1" | while IFS= read -r url; do
+links="$(realpath "$1")"
+cd "$2" || exit 1
+
+tmp="$(mktemp)"
+awk -F'\t' '{print $2}' "$links" > "$tmp"
+
+pids=""
+while IFS= read -r url; do
     wget \
         --adjust-extension \
         --timestamping \
         --span-hosts \
-        --background \
         --convert-links \
         --page-requisites \
         --directory-prefix="$2" \
         --continue \
         --quiet \
-        --append-output=wget.log \
         --wait=1 \
         --random-wait \
         --user-agent="" \
         --execute robots=off \
         "$url"
+    pids="$! $pids"
+done < "$tmp"
+
+for pid in $pids; do
+    wait "$pid"
 done
+
+rm -f "$tmp"
+
+echo "Done!"
