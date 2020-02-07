@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Archive</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  <body>
+    <h1>Archive</h1>
+    <ul>
+      {{ range . }}
+      <li><a href="/ar/{{.Url}}">{{.Title}}</a></li>
+      {{ end }}
+    </ul>
+  </body>
+</html>

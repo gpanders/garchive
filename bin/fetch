@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ $# -lt 2 ]; then
+    echo "Usage: $(basename "$0") <links.csv> <dir>" >&2
+    exit 1
+fi
+
+awk -F'\t' '{print $2}' "$1" | while IFS= read -r url; do
+    wget \
+        --adjust-extension \
+        --timestamping \
+        --span-hosts \
+        --background \
+        --convert-links \
+        --page-requisites \
+        --directory-prefix="$2" \
+        --continue \
+        --quiet \
+        --append-output=wget.log \
+        --wait=1 \
+        --random-wait \
+        --user-agent="" \
+        --execute robots=off \
+        "$url"
+done
