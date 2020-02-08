@@ -9,19 +9,21 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 )
 
 type Link struct {
-	Title string
-	Url   string
+	Title  string
+	Path   string
+	Domain string
 }
 
 var links string
 var protocolRe = regexp.MustCompile("^(?:http|https|ftp)://")
 
 func serveIndex(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.Path[1:]
-	if url != "" {
+	path := r.URL.Path[1:]
+	if path != "" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -32,7 +34,8 @@ func serveIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p, err := getLinks()
+	search := r.URL.Query().Get("search")
+	p, err := getLinks(search)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -41,7 +44,7 @@ func serveIndex(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, p)
 }
 
-func getLinks() ([]Link, error) {
+func getLinks(query string) ([]Link, error) {
 	f, err := os.Open(links)
 	if err != nil {
 		return nil, err
@@ -57,10 +60,17 @@ func getLinks() ([]Link, error) {
 		return nil, err
 	}
 
+	re := regexp.MustCompile(query)
+
 	for _, row := range rows {
 		title := row[0]
-		url := protocolRe.ReplaceAllLiteralString(row[1], "")
-		links = append(links, Link{Title: title, Url: url})
+		path := protocolRe.ReplaceAllLiteralString(row[1], "")
+		if !re.MatchString(title) && !re.MatchString(path) {
+			continue
+		}
+
+		domain := strings.SplitN(path, "/", 2)[0]
+		links = append(links, Link{Title: title, Path: path, Domain: domain})
 	}
 
 	return links, nil

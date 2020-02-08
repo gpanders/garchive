@@ -1,15 +1,46 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Archive</title>
-    <link rel="stylesheet" type="text/css" href="/static/style.css">
-  </head>
-  <body>
-    <h1>Archive</h1>
-    <ul>
-      {{ range . }}
-      <li><a href="/ar/{{.Url}}">{{.Title}}</a></li>
-      {{ end }}
-    </ul>
-  </body>
+	<head>
+		<title>Archive</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="/static/style.css">
+	</head>
+	<body class="light">
+		<main>
+			<section id="sidebar">
+				<h1><a href="/">Archive</a></h1>
+				<small><em>{{ len . }} items</em></small>
+				<form class="search">
+					<input type="text" name="search">
+					<button>Search</button>
+				</form>
+				<div class="themes">
+					<button class="light">Light</button>
+					<button class="dark">Dark</button>
+				</div>
+			</section>
+			<section class="links">
+				<ul>
+					{{ range . }}
+					<li>
+						<p><a class="link" href="/ar/{{.Path}}">{{.Title}}</a></p>
+						<small>{{.Domain}}</small>
+					</li>
+					{{ end }}
+				</ul>
+			</section>
+		</main>
+		<script type="text/javascript">
+			(function(d) {
+				d.querySelectorAll('.themes')[0].childNodes.forEach((elem) => {
+					if (elem.nodeName === "BUTTON") {
+						elem.addEventListener('click', (e) => {
+							e.preventDefault();
+							d.body.className = elem.className;
+						});
+					}
+				})
+			})(document)
+		</script>
+	</body>
 </html>
