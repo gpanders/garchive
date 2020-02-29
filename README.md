@@ -2,6 +2,8 @@
 
 Ultra-simple front-end for a web archive.
 
+[Demo](https://archive.gpanders.com)
+
 ## Description
 
 This tool provides a web front-end for a repository of archived web pages,
@@ -19,7 +21,7 @@ maintain archives of websites and fight [link rot][].
 The easiest method is to use [Docker](#using-docker). If you can't or don't
 want to use Docker, you can build `garchive` yourself:
 
-    $ git clone https://github.com/gpanders/garchive
+    $ git clone git://git.gpanders.com/garchive.git
     $ cd garchive
     $ go build
 
@@ -46,7 +48,7 @@ directory.
 Once you have your `links.csv` file and your archived websites, use `garchive`
 to serve up a simple front-end to access those archives:
 
-    $ garchive -links links.csv -archive data
+    $ garchive --links links.csv --archive data
 
 By default, `garchive` will bind to address `0.0.0.0` and port `8080`. Use the
 `-addr` and `-port` commandline flags to change those settings.
